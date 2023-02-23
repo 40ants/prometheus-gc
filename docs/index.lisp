@@ -39,6 +39,7 @@
                     :ignore-words ("JSON"
                                    "HTTP"
                                    "TODO"
+                                   "SBCL"
                                    "Unlicense"
                                    "REPL"
                                    "GIT"))
