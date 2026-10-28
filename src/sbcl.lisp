@@ -6,7 +6,12 @@
    #:make-gc-collector))
 (in-package #:prometheus-gc)
 
+#-sbcl
+(defun make-gc-collector (&key namespace name registry)
+  (declare (ignore namespace name registry))
+  nil)
 
+#+sbcl
 (defclass gc-collector (prometheus:collector)
   ((run-time)
    (bytes-consed)
@@ -27,12 +32,12 @@
    #+gencgc
    (setting-generation-number-of-gcs-before-promotion)))
 
-
+#+sbcl
 (defun to-label (symbol)
   (substitute #\_ #\- (string-downcase symbol)
               :test #'char=))
 
-
+#+sbcl
 (defmethod initialize-instance :after ((mc gc-collector) &rest args)
   (declare (ignore args))
 
@@ -79,7 +84,7 @@
                                     :labels labels
                                     :registry nil)))))
 
-
+#+sbcl
 (defun make-gc-collector (&key (namespace "") (name "sbcl_gc_collector") (registry prom:*default-registry*))
   (let ((collector (make-instance 'gc-collector
                                   :namespace namespace
@@ -88,7 +93,7 @@
       (prom:register collector registry))
     collector))
 
-
+#+sbcl
 (defmethod prometheus:collect ((mc gc-collector) cb)
   (labels ((send (gauge)
              (funcall cb gauge))
